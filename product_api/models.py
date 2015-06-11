@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Category(models.Model):
     """
         Handles information about category of the product
@@ -30,8 +31,8 @@ class Product(models.Model):
     """
     name = models.CharField(max_length=50)
     description = models.CharField(max_length=150, default="No description available")
-    category = models.ForeignKey(Category)
-    supplier = models.ForeignKey(Supplier, blank=True)
+    category = models.ForeignKey(Category, related_name='category-products')
+    supplier = models.ForeignKey(Supplier, related_name='supplier-products', blank=True)
     price_per_unit = models.PositiveIntegerField()
     size = models.CharField(max_length=100, blank=True)
     colour = models.CharField(max_length=30, blank=True)
