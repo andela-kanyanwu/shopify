@@ -1,30 +1,10 @@
 from django.shortcuts import render
-from django.http import Http404
 
-from rest_framework import status, viewsets
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from rest_framework import status, viewsets, filters
 
 from product_api.models import Category, Supplier, Product, Customer, Order
 from product_api.serializers import CategorySerializer, ProductSerializer, SupplierSerializer, CustomerSerializer, OrderSerializer
 
-# class ProductList(APIView):
-#     """
-#         List all products, or create a new product
-#     """
-#     serializer_class = ProductSerializer
-
-#     def get(self, request, format=None):
-#         products = Product.objects.all()
-#         serializer = ProductSerializer(products, many=True)
-#         return Response(serializer.data)
-
-#     def post(self, request, format=None):
-#         serializer = ProductSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CategoryViewSet(viewsets.ModelViewSet):
     """
@@ -32,6 +12,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
     """
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+
 
 class SupplierViewSet(viewsets.ModelViewSet):
     """
@@ -39,6 +22,9 @@ class SupplierViewSet(viewsets.ModelViewSet):
     """
     serializer_class = SupplierSerializer
     queryset = Supplier.objects.all()
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
+
 
 class ProductViewSet(viewsets.ModelViewSet):
     """
@@ -46,6 +32,8 @@ class ProductViewSet(viewsets.ModelViewSet):
     """
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
 
 class CustomerViewSet(viewsets.ModelViewSet):
     """
@@ -53,10 +41,14 @@ class CustomerViewSet(viewsets.ModelViewSet):
     """
     serializer_class = CustomerSerializer
     queryset = Customer.objects.all()
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
 
 class OrderViewSet(viewsets.ModelViewSet):
     """
-        Handles a customer instance
+        Handles an order instance
     """
     serializer_class = OrderSerializer
     queryset = Order.objects.all()
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('order_id',)
