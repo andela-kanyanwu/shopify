@@ -1,7 +1,10 @@
 from django.test import TestCase
+
 from rest_framework import status
 from rest_framework.test import APITestCase
+
 from product_api.models import Category, Supplier, Product, Customer, Order
+
 
 class CategoryTest(APITestCase):
     def setUp(self):
@@ -124,3 +127,42 @@ class ProductTest(APITestCase):
         data = {"url": "http://testserver/products/1/", "name": "soap", "description": "Best soap", "category": "http://testserver/categories/1/", "supplier": "http://testserver/suppliers/1/", "price_per_unit": 20, "size": "small", "colour": "white"}
         response = self.client.put("/products/1/", data, format='json')
         self.assertEqual(response.data, data)
+
+
+class OrderTest(APITestCase):
+    def setUp(self):
+        category_object = Category.objects.create(name="All", description="Available for everyone")
+        supplier_object = Supplier.objects.create(name="Djangs", address="32 Mac road", city="Lagos", country="Nigeria", email="djangs@yahoo.com", website="www.yahoo.com")
+        product_object = Product.objects.create(name="soap", description="Best soap", category=category_object, supplier=supplier_object, price_per_unit=20, size="small", colour="white")
+        customer_object = Customer.objects.create(name="Mac", address="32 Mac road", city="Lagos", country="Nigeria")
+
+        order = Order(order_id=1, date="2015-06-11T17:03:33Z", quantity_ordered=10, total_cost=200, customer=customer_object)
+        order.save()
+        order.product.add(product_object)
+
+    def test_get_orders(self):
+        """
+            Ensure we can get all order objects.
+        """
+        data = [{'url': 'http://testserver/orders/1/', 'date': '2015-06-11T17:03:33Z', 'quantity_ordered': 10, 'total_cost': 200, 'customer': 'http://testserver/customers/1/', 'product': ['http://testserver/products/1/']}]
+        response = self.client.get('/orders/')
+        self.assertEqual(response.data, data)
+
+    def test_post_orders(self):
+        """
+            Ensure we can create an order object.
+        """
+
+        data = {'url': 'http://testserver/orders/2/', 'date': '2015-07-11T17:03:33Z', 'quantity_ordered': 5, 'total_cost': 150, 'customer': 'http://testserver/customers/1/', 'product': ['http://testserver/products/1/']}
+
+        response = self.client.post('/orders/', data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data, data)
+
+    def test_delete_order(self):
+        """
+            Ensure we can delete an order
+        """
+        data = [{'url': 'http://testserver/orders/1/', 'date': '2015-06-11T17:03:33Z', 'quantity_ordered': 10, 'total_cost': 200, 'customer': 'http://testserver/customers/1/', 'product': ['http://testserver/products/1/']}]
+        response = self.client.delete('/orders/1/')
+        self.assertEqual(response.data, None)
