@@ -152,7 +152,6 @@ class OrderTest(APITestCase):
         """
             Ensure we can create an order object.
         """
-
         data = {'url': 'http://testserver/orders/2/', 'date': '2015-07-11T17:03:33Z', 'quantity_ordered': 5, 'total_cost': 150, 'customer': 'http://testserver/customers/1/', 'product': ['http://testserver/products/1/']}
 
         response = self.client.post('/orders/', data, format='json')
