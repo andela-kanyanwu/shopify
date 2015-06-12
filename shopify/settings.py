@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'product_api',
     'rest_framework',
     'corsheaders',
+    'rest_framework_swagger',
 )
 
 MIDDLEWARE_CLASSES = (
